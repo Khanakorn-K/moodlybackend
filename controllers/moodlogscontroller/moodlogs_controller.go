@@ -1,7 +1,8 @@
-package controllers
+package moodlogscontroller
 
 import (
 	models "moodly/Models"
+	"moodly/helpers"
 	"moodly/services"
 	"net/http"
 	"strconv"
@@ -17,34 +18,18 @@ func NewMoodLogsController(service *services.MoodLogsService) *MoodLogsControlle
 	return &MoodLogsController{service: service}
 }
 
-func getUserIDFromContext(c *gin.Context) (uint, bool) {
-	userIDValue, exists := c.Get("user_id")
-	if !exists {
-		return 0, false
-	}
-
-	userID, ok := userIDValue.(uint)
-	if !ok {
-		return 0, false
-	}
-
-	return userID, true
-}
-
 func (mc *MoodLogsController) CreateMoodLog(c *gin.Context) {
-	userID, ok := getUserIDFromContext(c)
+	userID, ok := helpers.GetUserIDFromContext(c)
 	if !ok {
 		c.JSON(http.StatusUnauthorized, gin.H{"message": "unauthorized"})
 		return
 	}
 
-	type CreateMoodLogRequest struct {
-		Mood   int    `json:"mood" binding:"required"`
-		Note   string `json:"note"`
-		Causes string `json:"causes"`
+	var req moodlogsCreateRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		return
 	}
-
-	var req CreateMoodLogRequest
 
 	moodLog := models.MoodLog{
 		UserID: userID,
@@ -52,12 +37,6 @@ func (mc *MoodLogsController) CreateMoodLog(c *gin.Context) {
 		Note:   req.Note,
 		Causes: req.Causes,
 	}
-	if err := c.ShouldBindJSON(&moodLog); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
-		return
-	}
-
-	moodLog.UserID = userID
 
 	if err := mc.service.CreateMoodLog(&moodLog); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
@@ -71,7 +50,7 @@ func (mc *MoodLogsController) CreateMoodLog(c *gin.Context) {
 }
 
 func (mc *MoodLogsController) GetMoodLogsByDate(c *gin.Context) {
-	userID, ok := getUserIDFromContext(c)
+	userID, ok := helpers.GetUserIDFromContext(c)
 	if !ok {
 		c.JSON(http.StatusUnauthorized, gin.H{"message": "unauthorized"})
 		return
@@ -91,7 +70,7 @@ func (mc *MoodLogsController) GetMoodLogsByDate(c *gin.Context) {
 }
 
 func (mc *MoodLogsController) UpdateMoodLog(c *gin.Context) {
-	userID, ok := getUserIDFromContext(c)
+	_, ok := helpers.GetUserIDFromContext(c)
 	if !ok {
 		c.JSON(http.StatusUnauthorized, gin.H{"message": "unauthorized"})
 		return
@@ -103,15 +82,18 @@ func (mc *MoodLogsController) UpdateMoodLog(c *gin.Context) {
 		return
 	}
 
-	var moodLog models.MoodLog
-
-	if err := c.ShouldBindJSON(&moodLog); err != nil {
+	var req moodlogsCreateRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
 
-	moodLog.ID = uint(id)
-	moodLog.UserID = userID
+	moodLog := models.MoodLog{
+		ID:     uint(id),
+		Mood:   req.Mood,
+		Note:   req.Note,
+		Causes: req.Causes,
+	}
 
 	if err := mc.service.UpdateMoodLog(&moodLog); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
@@ -125,7 +107,7 @@ func (mc *MoodLogsController) UpdateMoodLog(c *gin.Context) {
 }
 
 func (mc *MoodLogsController) DeleteMoodLog(c *gin.Context) {
-	userID, ok := getUserIDFromContext(c)
+	userID, ok := helpers.GetUserIDFromContext(c)
 	if !ok {
 		c.JSON(http.StatusUnauthorized, gin.H{"message": "unauthorized"})
 		return

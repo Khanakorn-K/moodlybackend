@@ -2,6 +2,9 @@ package main
 
 import (
 	"moodly/controllers"
+	"moodly/controllers/authcontroller"
+	"moodly/controllers/customercontroller"
+	"moodly/controllers/moodlogscontroller"
 	"moodly/initializers"
 	"moodly/middlewares"
 	"moodly/repositories"
@@ -24,7 +27,7 @@ func main() {
 	//auth
 	AuthRepo := repositories.NewAuthRepository(initializers.DB)
 	AuthService := services.NewAuthService(AuthRepo)
-	AuthController := controllers.NewAuthController(AuthService)
+	AuthController := authcontroller.NewAuthController(AuthService)
 	auth := r.Group("/auth")
 	auth.POST("/register", AuthController.HandleRegister)
 	auth.POST("/login", AuthController.HandleLogin)
@@ -32,8 +35,7 @@ func main() {
 	//moodLogs
 	MoodLogsRepo := repositories.NewMoodLogsRepository(initializers.DB)
 	MoodLogsService := services.NewMoodLogsService(MoodLogsRepo)
-	MoodLogsController := controllers.NewMoodLogsController(MoodLogsService)
-	// moodLogs
+	MoodLogsController := moodlogscontroller.NewMoodLogsController(MoodLogsService)
 	mood := r.Group("/mood-logs")
 	mood.Use(middlewares.AuthMiddleware())
 	mood.POST("/create-mood-log", MoodLogsController.CreateMoodLog)
@@ -44,7 +46,7 @@ func main() {
 	//customCauses
 	CustomCauseRepo := repositories.NewCustomCauseRepository(initializers.DB)
 	CustomCauseService := services.NewCustomCauseService(CustomCauseRepo)
-	CustomCauseController := controllers.NewCustomCauseController(CustomCauseService)
+	CustomCauseController := customercontroller.NewCustomCauseController(CustomCauseService)
 	cause := r.Group("/custom-causes")
 	cause.Use(middlewares.AuthMiddleware())
 	cause.POST("/create-custom-cause", CustomCauseController.CreateCause)

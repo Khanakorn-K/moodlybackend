@@ -1,6 +1,7 @@
-package controllers
+package authcontroller
 
 import (
+	"fmt"
 	models "moodly/Models"
 	"moodly/services"
 	"net/http"
@@ -15,17 +16,12 @@ type AuthController struct {
 func NewAuthController(services *services.AuthService) *AuthController {
 	return &AuthController{service: services}
 }
-
 func (ac *AuthController) HandleRegister(c *gin.Context) {
-	type registerRequest struct {
-		Name     string `json:"name"`
-		Email    string `json:"email"`
-		Password string `json:"password"`
-	}
 
-	var req registerRequest
+	var req RegisterRequest
 
 	if err := c.ShouldBindJSON(&req); err != nil {
+
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": err.Error(),
 		})
@@ -47,25 +43,27 @@ func (ac *AuthController) HandleRegister(c *gin.Context) {
 
 	c.JSON(http.StatusCreated, gin.H{
 		"message": "user created",
+		"user": gin.H{
+			"id":    user.ID,
+			"name":  user.Name,
+			"email": user.Email,
+		},
 	})
 }
 
 func (ac *AuthController) HandleLogin(c *gin.Context) {
-	type loginReqModel struct {
-		Email    string `json:"email"`
-		Password string `json:"password"`
-	}
+	var req LoginRequest
 
-	var body loginReqModel
+	if err := c.ShouldBindJSON(&req); err != nil {
+		fmt.Println("bind error:", err)
 
-	if err := c.ShouldBindJSON(&body); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": err.Error(),
 		})
 		return
 	}
 
-	token, err := ac.service.Login(body.Email, body.Password)
+	token, err := ac.service.Login(req.Email, req.Password)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{
 			"message": err.Error(),

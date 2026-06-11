@@ -65,9 +65,5 @@ func (s *MoodLogsService) DeleteMoodLog(id uint, userID uint) error {
 		return errors.New("mood log id is required")
 	}
 
-	if userID == 0 {
-		return errors.New("user id is required")
-	}
-
 	return s.repo.DeleteMoodLog(id, userID)
 }

@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"moodly/helpers"
 	"moodly/services"
 	"net/http"
 
@@ -16,7 +17,7 @@ func NewInsightController(service *services.InsightService) *InsightController {
 }
 
 func (ic *InsightController) FindMoodLogs(c *gin.Context) {
-	userID, ok := getUserIDFromContext(c)
+	userID, ok := helpers.GetUserIDFromContext(c)
 	if !ok {
 		c.JSON(http.StatusUnauthorized, gin.H{
 			"message": "unauthorized",

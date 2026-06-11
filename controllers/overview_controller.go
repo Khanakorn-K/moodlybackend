@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"moodly/helpers"
 	"moodly/services"
 	"net/http"
 
@@ -16,7 +17,7 @@ func NewOverviewController(service *services.OverviewService) *OverviewControlle
 }
 
 func (oc *OverviewController) GetMonthlyAverageMood(c *gin.Context) {
-	userID, ok := getUserIDFromContext(c)
+	userID, ok := helpers.GetUserIDFromContext(c)
 	if !ok {
 		c.JSON(http.StatusUnauthorized, gin.H{"message": "unauthorized"})
 		return
@@ -34,7 +35,7 @@ func (oc *OverviewController) GetMonthlyAverageMood(c *gin.Context) {
 }
 
 func (oc *OverviewController) GetOverview(c *gin.Context) {
-	userID, ok := getUserIDFromContext(c)
+	userID, ok := helpers.GetUserIDFromContext(c)
 	if !ok {
 		c.JSON(http.StatusUnauthorized, gin.H{"message": "unauthorized"})
 		return

@@ -1,7 +1,8 @@
-package controllers
+package customercontroller
 
 import (
 	models "moodly/Models"
+	"moodly/helpers"
 	"moodly/services"
 	"net/http"
 	"strconv"
@@ -18,34 +19,37 @@ func NewCustomCauseController(service *services.CustomCauseService) *CustomCause
 }
 
 func (cc *CustomCauseController) CreateCause(c *gin.Context) {
-	userID, ok := getUserIDFromContext(c)
+	userID, ok := helpers.GetUserIDFromContext(c)
 	if !ok {
 		c.JSON(http.StatusUnauthorized, gin.H{"message": "unauthorized"})
 		return
 	}
 
-	var cause models.CustomCause
+	var req createCustomCausesRequest
 
-	if err := c.ShouldBindJSON(&cause); err != nil {
+	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
 
-	cause.UserID = userID
+	customcauses := models.CustomCause{
+		UserID: userID,
+		Name:   req.Name,
+	}
 
-	if err := cc.service.CreateCause(&cause); err != nil {
+	if err := cc.service.CreateCause(&customcauses); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
 
 	c.JSON(http.StatusCreated, gin.H{
 		"message": "cause created",
-		"cause":   cause,
+		"cause":   customcauses.Name,
 	})
 }
 
 func (cc *CustomCauseController) GetCauses(c *gin.Context) {
-	userID, ok := getUserIDFromContext(c)
+	userID, ok := helpers.GetUserIDFromContext(c)
 	if !ok {
 		c.JSON(http.StatusUnauthorized, gin.H{"message": "unauthorized"})
 		return
@@ -63,7 +67,7 @@ func (cc *CustomCauseController) GetCauses(c *gin.Context) {
 }
 
 func (cc *CustomCauseController) UpdateCause(c *gin.Context) {
-	userID, ok := getUserIDFromContext(c)
+	userID, ok := helpers.GetUserIDFromContext(c)
 	if !ok {
 		c.JSON(http.StatusUnauthorized, gin.H{"message": "unauthorized"})
 		return
@@ -97,7 +101,7 @@ func (cc *CustomCauseController) UpdateCause(c *gin.Context) {
 }
 
 func (cc *CustomCauseController) DeleteCause(c *gin.Context) {
-	userID, ok := getUserIDFromContext(c)
+	userID, ok := helpers.GetUserIDFromContext(c)
 	if !ok {
 		c.JSON(http.StatusUnauthorized, gin.H{"message": "unauthorized"})
 		return
