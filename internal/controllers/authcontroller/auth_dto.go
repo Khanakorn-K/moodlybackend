@@ -1,0 +1,19 @@
+package authcontroller
+
+type RegisterRequest struct {
+	Name     string `json:"name" binding:"required"`
+	Email    string `json:"email" binding:"required,email"`
+	Password string `json:"password" binding:"required,min=6"`
+}
+
+type LoginRequest struct {
+	Email    string `json:"email" binding:"required,email"`
+	Password string `json:"password" binding:"required"`
+}
+
+type OAuthGoogleLoginRequest struct {
+	Email             string `json:"email" binding:"required"`
+	Name              string `json:"name"`
+	Provider          string `json:"provider"`
+	ProviderAccountID string `json:"providerAccountId" binding:"required"`
+}
