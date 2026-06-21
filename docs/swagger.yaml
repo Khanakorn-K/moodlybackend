@@ -1,0 +1,638 @@
+basePath: /
+definitions:
+  internal_controllers_authcontroller.LoginRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  internal_controllers_authcontroller.OAuthGoogleLoginRequest:
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+      provider:
+        type: string
+      providerAccountId:
+        type: string
+    required:
+    - email
+    - providerAccountId
+    type: object
+  internal_controllers_authcontroller.RegisterRequest:
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+      password:
+        minLength: 6
+        type: string
+    required:
+    - email
+    - name
+    - password
+    type: object
+  internal_controllers_customercontroller.CreateCustomCausesRequest:
+    properties:
+      name:
+        type: string
+    required:
+    - name
+    type: object
+  internal_controllers_insightcontroller.InsightResultResponse:
+    properties:
+      averageMood:
+        type: number
+      causesAnalysis:
+        additionalProperties:
+          additionalProperties:
+            type: integer
+          type: object
+        type: object
+      moodDistribution:
+        additionalProperties:
+          type: integer
+        type: object
+      totalLogs:
+        type: integer
+    type: object
+  internal_controllers_moodlogscontroller.MoodlogsCreateRequest:
+    properties:
+      causes:
+        type: string
+      mood:
+        maximum: 5
+        minimum: 1
+        type: integer
+      note:
+        type: string
+    required:
+    - causes
+    - mood
+    type: object
+  internal_controllers_overviewcontroller.CauseSummaryResponse:
+    properties:
+      cause:
+        type: string
+      moodBreakdown:
+        items:
+          $ref: '#/definitions/internal_controllers_overviewcontroller.MoodDistributionResponse'
+        type: array
+      totalCount:
+        type: integer
+    type: object
+  internal_controllers_overviewcontroller.DailyCauseDistributionResponse:
+    properties:
+      cause:
+        type: string
+      count:
+        type: integer
+    type: object
+  internal_controllers_overviewcontroller.DailyMoodAverageResponse:
+    properties:
+      averageMood:
+        type: number
+      causeDistribution:
+        items:
+          $ref: '#/definitions/internal_controllers_overviewcontroller.DailyCauseDistributionResponse'
+        type: array
+      date:
+        type: string
+      totalLogs:
+        type: integer
+    type: object
+  internal_controllers_overviewcontroller.MonthlyAverageMoodResponse:
+    properties:
+      averageMood:
+        type: number
+      dailyMoodAverages:
+        items:
+          $ref: '#/definitions/internal_controllers_overviewcontroller.DailyMoodAverageResponse'
+        type: array
+      endDate:
+        type: string
+      month:
+        type: string
+      startDate:
+        type: string
+      totalLogs:
+        type: integer
+    type: object
+  internal_controllers_overviewcontroller.MoodDistributionResponse:
+    properties:
+      count:
+        type: integer
+      mood:
+        type: integer
+    type: object
+  internal_controllers_overviewcontroller.MoodNoteResponse:
+    properties:
+      causes:
+        items:
+          type: string
+        type: array
+      createdAt:
+        type: string
+      date:
+        type: string
+      id:
+        type: integer
+      mood:
+        type: integer
+      note:
+        type: string
+    type: object
+  internal_controllers_overviewcontroller.OverviewResponse:
+    properties:
+      averageMood:
+        type: number
+      causeSummaries:
+        items:
+          $ref: '#/definitions/internal_controllers_overviewcontroller.CauseSummaryResponse'
+        type: array
+      dailyMoodAverages:
+        items:
+          $ref: '#/definitions/internal_controllers_overviewcontroller.DailyMoodAverageResponse'
+        type: array
+      endDate:
+        type: string
+      moodDistribution:
+        items:
+          $ref: '#/definitions/internal_controllers_overviewcontroller.MoodDistributionResponse'
+        type: array
+      moodNotes:
+        items:
+          $ref: '#/definitions/internal_controllers_overviewcontroller.MoodNoteResponse'
+        type: array
+      startDate:
+        type: string
+      totalLogs:
+        type: integer
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: Moodly Backend API
+  title: Moodly API
+  version: "1.0"
+paths:
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Login user account
+      parameters:
+      - description: Login Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_controllers_authcontroller.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Login User
+      tags:
+      - Auth
+  /auth/oauth/google:
+    post:
+      consumes:
+      - application/json
+      description: Login user account
+      parameters:
+      - description: OAuth Google Login Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_controllers_authcontroller.OAuthGoogleLoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Login User OAuth
+      tags:
+      - Auth
+  /auth/register:
+    post:
+      consumes:
+      - application/json
+      description: Login user account
+      parameters:
+      - description: Register Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_controllers_authcontroller.RegisterRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Register
+      tags:
+      - Auth
+  /custom-causes/create-custom-cause:
+    post:
+      consumes:
+      - application/json
+      description: Create a new custom cause for the authenticated user
+      parameters:
+      - description: Create Custom Cause Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_controllers_customercontroller.CreateCustomCausesRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Create Custom Cause
+      tags:
+      - Custom Cause
+  /custom-causes/delete-custom-cause/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a custom cause by ID
+      parameters:
+      - description: Cause ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Delete Custom Cause
+      tags:
+      - Custom Cause
+  /custom-causes/get-custom-causes:
+    get:
+      consumes:
+      - application/json
+      description: Get all custom causes for the authenticated user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get Custom Causes
+      tags:
+      - Custom Cause
+  /custom-causes/update-custom-cause/{id}:
+    patch:
+      consumes:
+      - application/json
+      description: Update a custom cause by ID
+      parameters:
+      - description: Cause ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Update Custom Cause Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_controllers_customercontroller.CreateCustomCausesRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Update Custom Cause
+      tags:
+      - Custom Cause
+  /insights/get-insights:
+    get:
+      consumes:
+      - application/json
+      description: Get mood insights for the selected date
+      parameters:
+      - description: Selected Date (YYYY-MM-DD)
+        in: query
+        name: selectedDate
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_controllers_insightcontroller.InsightResultResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get Insights
+      tags:
+      - Insight
+  /mood-logs/create-mood-log:
+    post:
+      consumes:
+      - application/json
+      description: Create Mood Log
+      parameters:
+      - description: MoodlogsCreate Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_controllers_moodlogscontroller.MoodlogsCreateRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Create Mood Log
+      tags:
+      - Moodlog
+  /mood-logs/delete-mood-log/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a mood log
+      parameters:
+      - description: Mood Log ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Delete Mood Log
+      tags:
+      - Moodlog
+  /mood-logs/get-mood-logs:
+    get:
+      consumes:
+      - application/json
+      description: Get user's mood logs by date
+      parameters:
+      - description: Date (YYYY-MM-DD)
+        in: query
+        name: date
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get Mood Logs By Date
+      tags:
+      - Moodlog
+  /mood-logs/update-mood-log/{id}:
+    patch:
+      consumes:
+      - application/json
+      description: Update an existing mood log
+      parameters:
+      - description: Mood Log ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Update Mood Log Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_controllers_moodlogscontroller.MoodlogsCreateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Update Mood Log
+      tags:
+      - Moodlog
+  /overview/get-monthly-average-mood:
+    get:
+      consumes:
+      - application/json
+      description: Get average mood statistics for a specific month
+      parameters:
+      - description: Month (YYYY-MM)
+        in: query
+        name: month
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_controllers_overviewcontroller.MonthlyAverageMoodResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get Monthly Average Mood
+      tags:
+      - Overview
+  /overview/get-overview:
+    get:
+      consumes:
+      - application/json
+      description: Get mood overview within a date range
+      parameters:
+      - description: Start Date (YYYY-MM-DD)
+        in: query
+        name: startDate
+        required: true
+        type: string
+      - description: End Date (YYYY-MM-DD)
+        in: query
+        name: endDate
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_controllers_overviewcontroller.OverviewResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get Overview
+      tags:
+      - Overview
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

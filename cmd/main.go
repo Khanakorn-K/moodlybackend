@@ -1,11 +1,25 @@
+// @title Moodly API
+// @version 1.0
+// @description Moodly Backend API
+// @host localhost:8080
+// @BasePath /
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
+
 package main
 
 import (
+	_ "moodly/docs"
+
 	"moodly/config/initializers"
 	"moodly/internal/routes"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 func init() {
@@ -21,7 +35,12 @@ func main() {
 			"http://localhost:3000",
 		},
 		AllowMethods: []string{
-			"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS",
+			"GET",
+			"POST",
+			"PUT",
+			"PATCH",
+			"DELETE",
+			"OPTIONS",
 		},
 		AllowHeaders: []string{
 			"Origin",
@@ -31,7 +50,14 @@ func main() {
 		AllowCredentials: true,
 	}))
 
+	r.GET(
+		"/swagger/*any",
+		ginSwagger.WrapHandler(swaggerFiles.Handler),
+	)
+
 	routes.RegisterRoutes(r)
 
-	r.Run()
+	if err := r.Run(":8080"); err != nil {
+		panic(err)
+	}
 }

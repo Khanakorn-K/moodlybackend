@@ -18,6 +18,20 @@ func NewInsightController(service *services.InsightService) *InsightController {
 	return &InsightController{service: service}
 }
 
+// GetInsights godoc
+//
+// @Summary Get Insights
+// @Description Get mood insights for the selected date
+// @Tags Insight
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param selectedDate query string true "Selected Date (YYYY-MM-DD)"
+// @Success 200 {object} InsightResultResponse
+// @Failure 400 {object} map[string]interface{}
+// @Failure 401 {object} map[string]interface{}
+// @Failure 500 {object} map[string]interface{}
+// @Router /insights/get-insights [get]
 func (ic *InsightController) GetInsights(c *gin.Context) {
 	userID, ok := pkg.GetUserIDFromContext(c)
 	if !ok {

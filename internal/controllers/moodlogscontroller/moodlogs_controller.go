@@ -18,6 +18,19 @@ func NewMoodLogsController(service *services.MoodLogsService) *MoodLogsControlle
 	return &MoodLogsController{service: service}
 }
 
+// HandleCreateMoodLog godoc
+//
+// @Summary Create Mood Log
+// @Description Create Mood Log
+// @Tags Moodlog
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param request body MoodlogsCreateRequest true "MoodlogsCreate Request"
+// @Success 201 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
+// @Failure 401 {object} map[string]interface{}
+// @Router /mood-logs/create-mood-log [post]
 func (mc *MoodLogsController) CreateMoodLog(c *gin.Context) {
 	userID, ok := pkg.GetUserIDFromContext(c)
 	if !ok {
@@ -25,7 +38,7 @@ func (mc *MoodLogsController) CreateMoodLog(c *gin.Context) {
 		return
 	}
 
-	var req moodlogsCreateRequest
+	var req MoodlogsCreateRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
@@ -49,6 +62,19 @@ func (mc *MoodLogsController) CreateMoodLog(c *gin.Context) {
 	})
 }
 
+// GetMoodLogsByDate godoc
+//
+// @Summary Get Mood Logs By Date
+// @Description Get user's mood logs by date
+// @Tags Moodlog
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param date query string true "Date (YYYY-MM-DD)"
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
+// @Failure 401 {object} map[string]interface{}
+// @Router /mood-logs/get-mood-logs [get]
 func (mc *MoodLogsController) GetMoodLogsByDate(c *gin.Context) {
 	userID, ok := pkg.GetUserIDFromContext(c)
 	if !ok {
@@ -69,6 +95,20 @@ func (mc *MoodLogsController) GetMoodLogsByDate(c *gin.Context) {
 	})
 }
 
+// UpdateMoodLog godoc
+//
+// @Summary Update Mood Log
+// @Description Update an existing mood log
+// @Tags Moodlog
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param id path int true "Mood Log ID"
+// @Param request body MoodlogsCreateRequest true "Update Mood Log Request"
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
+// @Failure 401 {object} map[string]interface{}
+// @Router /mood-logs/update-mood-log/{id} [patch]
 func (mc *MoodLogsController) UpdateMoodLog(c *gin.Context) {
 	userID, ok := pkg.GetUserIDFromContext(c)
 	if !ok {
@@ -82,7 +122,7 @@ func (mc *MoodLogsController) UpdateMoodLog(c *gin.Context) {
 		return
 	}
 
-	var req moodlogsCreateRequest
+	var req MoodlogsCreateRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
@@ -107,6 +147,19 @@ func (mc *MoodLogsController) UpdateMoodLog(c *gin.Context) {
 	})
 }
 
+// DeleteMoodLog godoc
+//
+// @Summary Delete Mood Log
+// @Description Delete a mood log
+// @Tags Moodlog
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param id path int true "Mood Log ID"
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
+// @Failure 401 {object} map[string]interface{}
+// @Router /mood-logs/delete-mood-log/{id} [delete]
 func (mc *MoodLogsController) DeleteMoodLog(c *gin.Context) {
 	userID, ok := pkg.GetUserIDFromContext(c)
 	if !ok {

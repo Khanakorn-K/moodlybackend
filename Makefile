@@ -12,6 +12,9 @@ check:
 	go build cmd/main.go
 	go test cmd/main.go
 	rm -f main
+
+swagerinit:
+	swag init -g cmd/main.go --parseDependency --parseInternal
  
 dockerbuildimage:
 	docker build -t moodlyimage -f Docker/dockerfile .

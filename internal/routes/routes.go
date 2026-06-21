@@ -21,7 +21,6 @@ func RegisterRoutes(r *gin.Engine) {
 	registerInsightRoutes(r)
 	registerOverviewRoutes(r)
 }
-
 func registerAuthRoutes(r *gin.Engine) {
 	authRepo := repositoriesImpl.NewAuthRepositoryImpl(initializers.DB)
 	authService := services.NewAuthService(authRepo)
@@ -31,10 +30,6 @@ func registerAuthRoutes(r *gin.Engine) {
 
 	auth.POST("/register", authController.HandleRegister)
 	auth.POST("/login", authController.HandleLogin)
-
-	// สำหรับ Go OAuth redirect flow
-	// auth.POST("/google/login", authController.HandleGoogleLogin)
-	// auth.GET("/google/callback", authController.HandleGoogleCallback)
 
 	// สำหรับ NextAuth ส่ง profile จาก Google มาให้ backend
 	auth.POST("/oauth/google", authController.HandleOAuthGoogleLogin)

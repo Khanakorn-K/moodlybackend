@@ -16,6 +16,16 @@ func NewAuthController(service *services.AuthService) *AuthController {
 	return &AuthController{service: service}
 }
 
+// HandleRegister godoc
+//
+// @Summary Register
+// @Description Login user account
+// @Tags Auth
+// @Accept json
+// @Produce json
+// @Param request body RegisterRequest true "Register Request"
+// @Success 201 {object} map[string]interface{}
+// @Router /auth/register [post]
 func (ac *AuthController) HandleRegister(c *gin.Context) {
 	var req RegisterRequest
 
@@ -49,6 +59,16 @@ func (ac *AuthController) HandleRegister(c *gin.Context) {
 	})
 }
 
+// HandleLogin godoc
+//
+// @Summary Login User
+// @Description Login user account
+// @Tags Auth
+// @Accept json
+// @Produce json
+// @Param request body LoginRequest true "Login Request"
+// @Success 200 {object} map[string]interface{}
+// @Router /auth/login [post]
 func (ac *AuthController) HandleLogin(c *gin.Context) {
 	var req LoginRequest
 
@@ -73,6 +93,16 @@ func (ac *AuthController) HandleLogin(c *gin.Context) {
 	})
 }
 
+// HandleLoginOAuthGoogle godoc
+//
+// @Summary Login User OAuth
+// @Description Login user account
+// @Tags Auth
+// @Accept json
+// @Produce json
+// @Param request body OAuthGoogleLoginRequest true "OAuth Google Login Request"
+// @Success 200 {object} map[string]interface{}
+// @Router /auth/oauth/google [post]
 func (ac *AuthController) HandleOAuthGoogleLogin(c *gin.Context) {
 	var req OAuthGoogleLoginRequest
 

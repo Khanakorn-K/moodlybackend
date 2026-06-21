@@ -18,6 +18,19 @@ func NewCustomCauseController(service *services.CustomCauseService) *CustomCause
 	return &CustomCauseController{service: service}
 }
 
+// CreateCause godoc
+//
+// @Summary Create Custom Cause
+// @Description Create a new custom cause for the authenticated user
+// @Tags Custom Cause
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param request body CreateCustomCausesRequest true "Create Custom Cause Request"
+// @Success 201 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
+// @Failure 401 {object} map[string]interface{}
+// @Router /custom-causes/create-custom-cause [post]
 func (cc *CustomCauseController) CreateCause(c *gin.Context) {
 	userID, ok := pkg.GetUserIDFromContext(c)
 	if !ok {
@@ -25,7 +38,7 @@ func (cc *CustomCauseController) CreateCause(c *gin.Context) {
 		return
 	}
 
-	var req createCustomCausesRequest
+	var req CreateCustomCausesRequest
 
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
@@ -48,6 +61,18 @@ func (cc *CustomCauseController) CreateCause(c *gin.Context) {
 	})
 }
 
+// GetCauses godoc
+//
+// @Summary Get Custom Causes
+// @Description Get all custom causes for the authenticated user
+// @Tags Custom Cause
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
+// @Failure 401 {object} map[string]interface{}
+// @Router /custom-causes/get-custom-causes [get]
 func (cc *CustomCauseController) GetCauses(c *gin.Context) {
 	userID, ok := pkg.GetUserIDFromContext(c)
 	if !ok {
@@ -66,6 +91,20 @@ func (cc *CustomCauseController) GetCauses(c *gin.Context) {
 	})
 }
 
+// UpdateCause godoc
+//
+// @Summary Update Custom Cause
+// @Description Update a custom cause by ID
+// @Tags Custom Cause
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param id path int true "Cause ID"
+// @Param request body CreateCustomCausesRequest true "Update Custom Cause Request"
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
+// @Failure 401 {object} map[string]interface{}
+// @Router /custom-causes/update-custom-cause/{id} [patch]
 func (cc *CustomCauseController) UpdateCause(c *gin.Context) {
 	userID, ok := pkg.GetUserIDFromContext(c)
 	if !ok {
@@ -79,7 +118,7 @@ func (cc *CustomCauseController) UpdateCause(c *gin.Context) {
 		return
 	}
 
-	var req createCustomCausesRequest
+	var req CreateCustomCausesRequest
 
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
@@ -103,6 +142,19 @@ func (cc *CustomCauseController) UpdateCause(c *gin.Context) {
 	})
 }
 
+// DeleteCause godoc
+//
+// @Summary Delete Custom Cause
+// @Description Delete a custom cause by ID
+// @Tags Custom Cause
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param id path int true "Cause ID"
+// @Success 200 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
+// @Failure 401 {object} map[string]interface{}
+// @Router /custom-causes/delete-custom-cause/{id} [delete]
 func (cc *CustomCauseController) DeleteCause(c *gin.Context) {
 	userID, ok := pkg.GetUserIDFromContext(c)
 	if !ok {

@@ -1,5 +1,5 @@
 package customercontroller
 
-type createCustomCausesRequest struct {
+type CreateCustomCausesRequest struct {
 	Name string `json:"name" binding:"required"`
 }
