@@ -175,7 +175,7 @@ definitions:
       totalLogs:
         type: integer
     type: object
-host: localhost:8080
+host: '18.141.224.245:8080 // # อย่่าลืมกลับมาแก้ถ้าเปิดปิด instance'
 info:
   contact: {}
   description: Moodly Backend API
@@ -446,6 +446,16 @@ paths:
           schema:
             additionalProperties: true
             type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties: true
+            type: object
       security:
       - BearerAuth: []
       summary: Create Mood Log
@@ -630,9 +640,4 @@ paths:
       summary: Get Overview
       tags:
       - Overview
-securityDefinitions:
-  BearerAuth:
-    in: header
-    name: Authorization
-    type: apiKey
 swagger: "2.0"
