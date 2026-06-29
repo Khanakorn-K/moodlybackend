@@ -1,7 +1,7 @@
 // @title Moodly API
 // @version 1.0
 // @description Moodly Backend API
-// @host 54.251.189.159:8080 // # อย่่าลืมกลับมาแก้ถ้าเปิดปิด instance
+// @host 18.141.224.245:8080 // # อย่่าลืมกลับมาแก้ถ้าเปิดปิด instance
 // @BasePath /
 
 package main
