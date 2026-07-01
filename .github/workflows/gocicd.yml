@@ -54,14 +54,14 @@ jobs:
       - name: Set image
         run: echo "IMAGE=${REGISTRY}/${IMAGE_NAME,,}" >> $GITHUB_ENV
 
-      - name: Build
+      - name: Build image
         run: |
           docker build \
+            -f Docker/dockerfile \
             -t $IMAGE:latest \
-            -t $IMAGE:${{ github.sha }} \
-            -f Docker/dockerfile .
+            -t $IMAGE:${{ github.sha }} .
 
-      - name: Push
+      - name: Push image
         run: |
           docker push $IMAGE:latest
           docker push $IMAGE:${{ github.sha }}
@@ -77,10 +77,10 @@ jobs:
           IMAGE_TAG: ${{ github.sha }}
           GITHUB_ACTOR: ${{ github.actor }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          JWT_SECRET: ${{ secrets.JWT_SECRET }}
-          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
           REDIS_PASSWORD: ${{ secrets.REDIS_PASSWORD }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
           URL_SERVER: ${{ secrets.URL_SERVER }}
           KAFKA_ADDR: ${{ secrets.KAFKA_ADDR }}
 
@@ -88,12 +88,15 @@ jobs:
           host: ${{ secrets.LIGHTSAIL_HOST }}
           username: ubuntu
           key: ${{ secrets.LIGHTSAIL_SSH_KEY }}
-          envs: IMAGE_TAG,GITHUB_ACTOR,GITHUB_TOKEN,DATABASE_URL,JWT_SECRET,POSTGRES_PASSWORD,REDIS_PASSWORD,URL_SERVER,KAFKA_ADDR
+
+          envs: IMAGE_TAG,GITHUB_ACTOR,GITHUB_TOKEN,DATABASE_URL,REDIS_PASSWORD,JWT_SECRET,URL_SERVER,KAFKA_ADDR
 
           script: |
             set -e
 
-            echo "$GITHUB_TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
+            echo "$GITHUB_TOKEN" | docker login ghcr.io \
+              -u "$GITHUB_ACTOR" \
+              --password-stdin
 
             if [ ! -d ~/moodly ]; then
               git clone https://github.com/Khanakorn-K/moodlybackend.git ~/moodly
@@ -108,9 +111,8 @@ jobs:
             cat > .env <<EOF
             IMAGE_TAG=$IMAGE_TAG
             DATABASE_URL=$DATABASE_URL
-            JWT_SECRET=$JWT_SECRET
-            POSTGRES_PASSWORD=$POSTGRES_PASSWORD
             REDIS_PASSWORD=$REDIS_PASSWORD
+            JWT_SECRET=$JWT_SECRET
             URL_SERVER=$URL_SERVER
             KAFKA_ADDR=$KAFKA_ADDR
             EOF
@@ -119,12 +121,12 @@ jobs:
 
             docker compose up -d
 
-            until docker compose exec -T postgres pg_isready -U postgres
+            until docker compose exec -T postgres pg_isready -U postgres -d moodlydb
             do
-                sleep 2
+              sleep 2
             done
 
             docker compose exec -T app \
-            go run config/migrate/migrate.go
+              go run config/migrate/migrate.go
 
             docker image prune -af
